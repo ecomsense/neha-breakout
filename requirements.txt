@@ -9,3 +9,5 @@ pendulum
 pyotp
 wemake-python-styleguide
 xlrd
+requests
+websocket_client

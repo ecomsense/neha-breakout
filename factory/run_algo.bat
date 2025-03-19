@@ -1,2 +1,2 @@
 @echo on
-cmd /k "cd /d ..\Scripts & .\activate & cd /d .\..\starter-code\src & py main.py"
+cmd /k "cd /d ..\..\Scripts & .\activate & cd /d .\..\neha-breakout\src & py main.py"

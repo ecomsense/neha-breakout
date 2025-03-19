@@ -9,7 +9,7 @@ def df_fm_file(file, columns=[], index_col="Symbol"):
     df = (
         pd.read_csv(file, index_col=index_col)
         if file.endswith("csv")
-        else pd.read_excel(file, index_col=index_col)
+        else pd.read_excel(file, index_col=index_col, engine="xlrd")
     )
     df = df[columns] if any(columns) else df
     return df

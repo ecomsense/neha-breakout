@@ -28,7 +28,6 @@ def login():
 def make_default_order():
     args = dict(
         product="C",
-        exchange="NSE",
     )
     return args
 
@@ -71,6 +70,7 @@ class Helper:
     def place_order(
         cls,
         symbol,
+        exchange,
         quantity,
         side,
         price=0,
@@ -83,6 +83,7 @@ class Helper:
             kwargs = make_default_order()
             args = dict(
                 symbol=symbol,
+                exchange=exchange,
                 quantity=quantity,
                 disclosed_quantity=quantity,
                 side=side,
@@ -99,43 +100,6 @@ class Helper:
             message = f"helper error {e} while placing order"
             logging.error(message)
             print_exc()
-
-    @classmethod
-    def close_positions(cls, half=False):
-        for pos in cls._api.positions:
-            if pos["quantity"] == 0:
-                continue
-            else:
-                quantity = abs(pos["quantity"])
-                quantity = int(quantity / 2) if half else quantity
-
-            logging.debug(f"trying to close {pos['symbol']}")
-            if pos["quantity"] < 0:
-                args = dict(
-                    symbol=pos["symbol"],
-                    quantity=quantity,
-                    disclosed_quantity=quantity,
-                    product="M",
-                    side="B",
-                    order_type="MKT",
-                    exchange="NFO",
-                    tag="close",
-                )
-                resp = cls._api.order_place(**args)
-                logging.debug(f"api responded with {resp}")
-            elif quantity > 0:
-                args = dict(
-                    symbol=pos["symbol"],
-                    quantity=quantity,
-                    disclosed_quantity=quantity,
-                    product="M",
-                    side="S",
-                    order_type="MKT",
-                    exchange="NFO",
-                    tag="close",
-                )
-                resp = cls._api.order_place(**args)
-                logging.debug(f"api responded with {resp}")
 
     @classmethod
     def mtm(cls):

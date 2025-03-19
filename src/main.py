@@ -44,7 +44,7 @@ def initialize():
     obj = Strategy()
     if obj is None:
         print("object is none")
-        timer(5)
+        timer(2)
     df = obj.df_stocks_in_play + obj.df_delivered
     tsym: List = df.index.to_list()
     logging.debug(f"tradingsymbols to enter and exit:{tsym=}")
@@ -59,6 +59,7 @@ def initialize():
     prices = {}
     while not any(prices):
         prices = ws.ltp
+        timer(1)
         print("waiting for websocket")
     return obj, ws
 

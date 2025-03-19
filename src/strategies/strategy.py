@@ -18,7 +18,7 @@ def df_fm_file(file, columns=[], index_col="Symbol"):
 class Strategy:
 
     def __init__(self):
-        stocks_columns = ["Bandh", "Capital", "Abv", "Risk", "Reward", "Qty"]
+        stocks_columns = ["Exch", "Bandh", "Capital", "Abv", "Risk", "Reward", "Qty"]
         df = df_fm_file(STOCKS_IN_PLAY, stocks_columns)
         df = df[df["Bandh"].isna()]
         df.index = df.index.astype(str)
@@ -50,6 +50,7 @@ class Strategy:
                 if row["Ltp"] > row["Abv"]:
                     resp = Helper.place_order(
                         symbol=idx,
+                        exchange=row["Exch"],
                         quantity=row["Qty"],
                         side="B",
                         price=0,
@@ -64,6 +65,7 @@ class Strategy:
                             round((row["Reward"] * row["Abv"] / 100) / 0.05) * 0.05
                         )
                         self.df_delivered.loc[idx] = [
+                            row["Exch"],
                             row["Abv"],
                             row["Abv"] - amount_in_risk,
                             row["Abv"] + expected_reward,
@@ -84,6 +86,7 @@ class Strategy:
                 if row["Ltp"] > row["Reward"] or row["Ltp"] < row["Risk"]:
                     resp = Helper.place_order(
                         symbol=idx,
+                        exchange=row["Exch"],
                         quantity=row["Qty"],
                         side="S",
                         price=0,

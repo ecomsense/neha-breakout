@@ -52,7 +52,7 @@ class Helper:
 
     @classmethod
     def holdings(cls):
-        return cls._api.holdings
+        return cls._api.broker.get_holdings()
 
     @classmethod
     def ltp(cls, exchange, token):

@@ -2,10 +2,11 @@ log:
   show: True
   level: 10
 program:
-  start: "9:15"
-  stop: "15:15"
+  start: "0:15"
+  stop: "23:55"
 trade:
-  start: "9:30"
-  stop: "15:00"
+  start: "0:30"
+  stop: "23:55"
 exchanges:
   - NSE
+

@@ -47,7 +47,7 @@ class Strategy:
         try:
             symbols_to_remove = []
             for idx, row in self.df_stocks_in_play.iterrows():
-                if row["Ltp"] > row["Abv"]:
+                if row["Ltp"] >= row["Abv"] and row["Ltp"] < row["Reward"]:
                     resp = Helper.place_order(
                         symbol=idx,
                         exchange=row["Exch"],
@@ -70,7 +70,8 @@ class Strategy:
                             row["Abv"] - amount_in_risk,
                             row["Abv"] + expected_reward,
                             int(row["Qty"]),
-                            pdlm.now("Asia/Kolkata"),
+                            pdlm.now("Asia/Kolkata").replace(microsecond=0).naive(),
+                            row["Ltp"],
                             row["Ltp"],
                         ]
                         symbols_to_remove.append(idx)
@@ -83,7 +84,7 @@ class Strategy:
         try:
             symbols_to_remove = []
             for idx, row in self.df_delivered.iterrows():
-                if row["Ltp"] > row["Reward"] or row["Ltp"] < row["Risk"]:
+                if row["Ltp"] >= row["Reward"] or row["Ltp"] <= row["Risk"]:
                     resp = Helper.place_order(
                         symbol=idx,
                         exchange=row["Exch"],
@@ -100,9 +101,12 @@ class Strategy:
                             "Risk": row["Risk"],
                             "Reward": row["Reward"],
                             "Qty": row["Qty"],
-                            "Ltp": row["Ltp"],
-                            "BDate": row["BDate"],
-                            "SDate": pdlm.now("Asia/Kolkata"),
+                            "Bdate": row["Bdate"],
+                            "Bprice": row["Bprice"],
+                            "SDate": pdlm.now("Asia/Kolkata")
+                            .replace(microsecond=0)
+                            .naive(),
+                            "SPrice": row["Ltp"],
                         }
                         df_new = pd.DataFrame([dct])
                         df_new.to_csv(HISTORY, mode="a", index=False, header=False)

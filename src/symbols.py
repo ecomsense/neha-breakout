@@ -83,6 +83,8 @@ class Symbols:
         df = df[["Token", "TradingSymbol"]]
         df = df[df["TradingSymbol"].isin(symbols)]
         lst = df.to_dict(orient="records")
+        for dct in lst:
+            dct["Exchange"] = self._option_exchange
         return lst
 
     def get_atm(self, ltp) -> int:

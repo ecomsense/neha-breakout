@@ -129,6 +129,7 @@ class Helper:
 
 if __name__ == "__main__":
     import pandas as pd
+    import pendulum as plum
 
     Helper.api()
     resp = Helper.orders()
@@ -141,7 +142,17 @@ if __name__ == "__main__":
         print(resp)
         pd.DataFrame(resp).to_csv(S_DATA + "positions.csv")
 
-    resp = Helper.holdings()
-    if resp and any(resp):
-        print(resp)
-        pd.DataFrame(resp).to_csv(S_DATA + "holdings.csv")
+    def unixtime(timee):
+        return plum.from_format(timee, "DDMMYYYY HH:mm:ss").timestamp()
+
+    st = unixtime("01091983 09:15:00")
+    et = unixtime("23032025 15:30:00")
+
+    re = Helper._api.broker.get_daily_price_series(
+        exchange="NSE",
+        tradingsymbol="PARADEEP-EQ",
+        startdate=st,
+        enddate=et,
+    )
+
+    print(len(re))

@@ -1,20 +1,12 @@
 from constants import logging, O_SETG
 from api import Helper
 from strategies.strategy import Strategy
-from toolkit.kokoo import is_time_past, kill_tmux, timer
+from toolkit.kokoo import is_time_past, kill_tmux, timer, blink
 from traceback import print_exc
 from symbols import Symbols
 from typing import Any, Dict, List
 from wserver import Wserver
 import pandas as pd
-
-
-def wait_until_start(start):
-    is_start = is_time_past(start)
-    while not is_start:
-        print(f"waiting for {start}")
-    else:
-        logging.info("program started")
 
 
 def get_tokens_from_symbols(obj: Strategy) -> List[Dict[Any, Any]]:
@@ -60,22 +52,17 @@ def subscribe(lst_of_symbols):
     return ws
 
 
-def test():
-    Helper.api()
-    obj = Strategy()
-    lst_of_symbols = get_tokens_from_symbols(obj)
-    print(lst_of_symbols)
-
-
 def main():
     try:
         start = O_SETG["program"].pop("start")
-        wait_until_start(start)
+        while not is_time_past(start):
+            print(f"waiting for {start}")
+            blink()
+        else:
+            logging.info("Happy Trading")
+
         Helper.api()
         obj = Strategy()
-        if obj is None:
-            print("object is none")
-            timer(2)
         lst_of_symbols = get_tokens_from_symbols(obj)
         ws = subscribe(lst_of_symbols)
         stop = O_SETG["program"].pop("stop")
@@ -84,6 +71,7 @@ def main():
             obj.run(new_ltps)
         else:
             obj.save_dfs()
+            timer(5)
             kill_tmux()
     except KeyboardInterrupt:
         print("saving")
